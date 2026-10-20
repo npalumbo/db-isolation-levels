@@ -111,7 +111,7 @@ func TestNonRepeatableRead(t *testing.T) {
 	defer conn1.Close(ctx)
 
 	// FIX: Use RepeatableRead so tx1 sees a consistent snapshot throughout
-	tx1, err := conn1.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	tx1, err := conn1.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
 	if err != nil {
 		t.Fatalf("tx1 begin failed: %v", err)
 	}
@@ -168,7 +168,7 @@ func TestPhantomRead(t *testing.T) {
 	defer conn1.Close(ctx)
 
 	// FIX: Use RepeatableRead so tx1 sees a consistent snapshot throughout
-	tx1, err := conn1.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.ReadCommitted})
+	tx1, err := conn1.BeginTx(ctx, pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
 	if err != nil {
 		t.Fatalf("tx1 begin failed: %v", err)
 	}
@@ -236,7 +236,7 @@ func TestSerializationAnomaly(t *testing.T) {
 		}
 		defer bgConn.Close(context.Background())
 
-		tx1, err := bgConn.BeginTx(context.Background(), pgx.TxOptions{IsoLevel: pgx.RepeatableRead})
+		tx1, err := bgConn.BeginTx(context.Background(), pgx.TxOptions{IsoLevel: pgx.Serializable})
 		if err != nil {
 			close(done)
 			return
